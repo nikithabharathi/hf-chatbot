@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HF Chatbot</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chat-box {
+      background: white;
+      width: 420px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .messages {
+      height: 250px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    .user { font-weight: bold; }
+    .bot { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="chat-box">
+    <h2>🤖 HF Chatbot</h2>
+    <div class="messages" id="messages"></div>
+    <input id="input" placeholder="Type a message..." />
+    <button onclick="send()">Send</button>
+  </div>
+
+  <script>
+    async function send() {
+      const input = document.getElementById("input");
+      const messages = document.getElementById("messages");
+      const text = input.value;
+
+      messages.innerHTML += `<div class="user">You:</div><div>${text}</div>`;
+      input.value = "";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await res.json();
+      messages.innerHTML += `<div class="bot"><b>Bot:</b> ${data.reply}</div>`;
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
+</body>
+</html>
